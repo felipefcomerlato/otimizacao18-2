@@ -1,6 +1,6 @@
-# Trabalho final da disciplina de Otimização Combinatória - 2018/2
+# Otimização Combinatória - UFRGS 2018/2
 
-(em construção)
+## Trabalho final (em construção)
 
 ## Autores
 
