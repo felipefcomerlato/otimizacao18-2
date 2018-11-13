@@ -26,7 +26,7 @@ import copy
 grafo = [
             [(4,1), (3,2), (2,4), (1,10)],
             [(4,7), (3,6), (2,12), (0,10)],
-            [(1,6), (3,3), (0,4), (4,6)],
+            [(1,12), (3,3), (0,4), (4,6)],
             [(4,5), (0,2), (1,6), (2,3)],
             [(0,1), (1,7), (2,6), (3,5)]
         ]
@@ -42,17 +42,22 @@ candidatos = []
 rcl = []
 solution = []
 visiteds = []
+finally_arco = (0,0)
 
 def construct(current_nodo):
     print("------------"+str(visiteds))
     for arco in grafo[current_nodo]:
-        if(arco[0] not in visiteds) or (arco[0] == 0):
+        if arco[0] == 0:
+            finally_arco = arco
+        elif arco[0] not in visiteds:
             candidatos.append(arco)
 
     visiteds.append(current_nodo)
 
-    if len(candidatos) == 1:
+    if len(candidatos) == 0:
+        candidatos.append(finally_arco)
         solution.append((current_nodo,candidatos[0][0],candidatos[0][1]))
+        print("Solucao final: "+str(solution))
         return 0
 
     max_s = max(candidatos,key=lambda item:item[1])[1]
@@ -61,12 +66,7 @@ def construct(current_nodo):
 
     for c in candidatos:
         if c[1] <= limit:
-            if c[0] != 0: ### AQUI NAO TA BOMBANDO, O RCL TA FICANDO VAZIO....
-                rcl.append(c)
-
-    print(candidatos)
-    print("------------------------------")
-    print(rcl)
+            rcl.append(c)
 
     choice = random.randrange(0,len(rcl))
     solution.append((current_nodo,rcl[choice][0],rcl[choice][1]))
