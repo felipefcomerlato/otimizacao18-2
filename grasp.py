@@ -42,10 +42,8 @@ candidatos = []
 rcl = []
 solution = []
 visiteds = []
-finally_arco = (0,0)
 
 def construct(current_nodo):
-    print("------------"+str(visiteds))
     for arco in grafo[current_nodo]:
         if arco[0] == 0:
             finally_arco = arco
