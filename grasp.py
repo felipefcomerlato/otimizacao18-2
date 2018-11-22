@@ -34,15 +34,6 @@ graph = [
             [5053, 5023, -1, -1, -1, -1]
         ]
 
-# graph = [
-#             [-1, -1,-1, -1,-1, -1],
-#             [-1, -1,-1, -1,-1, -1],
-#             [-1, -1,-1, -1,-1, -1],
-#             [-1, -1,-1, -1,-1, -1],
-#             [-1, -1,-1, -1,-1, -1],
-#             [-1, -1,-1, -1,-1, -1]
-#         ]
-
 alpha = 0.2
 solution = []
 global_visiteds = []
@@ -50,11 +41,9 @@ n_garages = 2
 
 init_node = 0 # Garage K
 candidates = [] #refresh for each trip inside sequence
-rcl = [] #
+rcl = []
 local_cost = 0
 visiteds = []
-
-print("\nNodo inicial: " + str(init_node) + "\n")
 
 def construct(current_node, local_cost):
 
@@ -64,10 +53,9 @@ def construct(current_node, local_cost):
     if current_node != init_node:
         visiteds.append(current_node)
 
-    if init_node in visiteds: # Se RETORNOU a garagem
-        if len(visiteds) < 2:
-            print("Nem saiu da garagem "+str(init_node))
-            return 0
+    ## Se RETORNOU a garagem, finaliza a solucao local,
+    ## atualiza a solucao global e retorna
+    if init_node in visiteds:
         local_solution = list(itertools.chain(*[[init_node], visiteds])) #flattened list
         solution.append(local_solution)
         # Custo total a partir da garagem k
@@ -86,10 +74,6 @@ def construct(current_node, local_cost):
     if len(candidates) == 0:
         print("Nenhum caminho possivel")
         return 0
-
-#########################################################################
-#####-----OS NODOS VISITADOS SAO CUMULATIVOS ATE PASSAR POR TODAS GARAGENS
-#########################################################################
 
     ## Obtem o custo de cada candidato
     candidates_costs = []
@@ -110,25 +94,33 @@ def construct(current_node, local_cost):
     ## Escolhe um caminho a seguir aleatoriamente dentre o contidos em RCL
     choice = random.randrange(0,len(rcl))
     local_cost = local_cost + graph[current_node][rcl[choice]]
-    # copia = copy.deepcopy(origem)
 
     print("Candidatos: " + str(candidates))
     print("Max: " + str(max_s) + " / Min: " + str(min_s) + " / Limit: " + str(limit))
     print("RCL: " + str(rcl) + " / Dest escolhido: " + str(rcl[choice]))
     print("\n--------\n")
 
+    ## Se o destino escolhido for a garagem de partida,
+    ## add a garagem como visitado para que na proxima iteracao o algoritmo
+    ## saiba que deve retornar.
+    ## Caso contrario, segue o fluxo normal, atualizando a lista global de visitados
     next_node = rcl[choice]
     if next_node == init_node:
         visiteds.append(init_node)
     else:
         global_visiteds.append(next_node)
 
+    ## Limpa as listas locais
     del candidates[:]
     del rcl[:]
+    del candidates_costs[:]
 
+    ## Invoca contruct para o nodo destino
     construct(next_node, local_cost)
 
-# print(max(candidates,key=itemgetter(1))[0])
+## end construct
+
+
 construct(init_node, local_cost)
 
-print("Todas as viagens realizadas: "+str(global_visiteds))
+print("Viagens realizadas: "+str(global_visiteds))
