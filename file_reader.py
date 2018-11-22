@@ -10,6 +10,8 @@
 
 
 import os
+import graph_instance
+import grasp
 
 #-------------------------------------------------------
 
@@ -46,17 +48,14 @@ def getInfos(f):
     print("Garages: "+str(garages))
     print("Trips: "+str(trips))
     for g in range(len(capacities)):
-        print("Garagem "+str(g+1)+" : capacidade "+str(capacities[g]))
+        print("Garagem "+str(g)+" : capacidade "+str(capacities[g]))
 
-    # Table lines
     table_lines = []
-
     for line in content:
         table_lines.append(line.split())
 
-    for line in table_lines:
-        print(line)
-
+    graph_setted = graph_instance.set(table_lines)
+    grasp.run(graph_setted)
 
 # -----------------
 
