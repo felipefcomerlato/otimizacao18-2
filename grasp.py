@@ -132,12 +132,14 @@ def run(graph_instance, garages_instance, capacities_instance):
     costs_table = []
 
     print("\n######################################\n")
-    for k in range(k_garages):
+    for k in range(k_garages): ## AQUI VAI UM WHILE (enquanto não forem visitados todos os locais)
         garage = random.randrange(0,k_garages) # 0, ... k_garages-1
         local_cost = 0
         del visiteds[:]
         del pre_global_visiteds[:]
-        construct(garage,local_cost)
+        if capacities[garage] > 0: ## SE AINDA TEM BUS DISPONIVEL
+            construct(garage,local_cost)
+
         # print("Garage: "+str(garage)+" -> "+str(capacities[garage]))
         # capacities[garage] = capacities[garage] - 1
 
