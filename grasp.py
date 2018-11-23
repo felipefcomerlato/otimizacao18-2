@@ -21,24 +21,24 @@
 #         x = x U {s}
 #         update candidates C
 
-import random
 import copy
 import itertools
+import random
+
 
 def construct(current_node, local_cost):
-    print("Nodo atual: " + str(current_node))
-    # print("init_node:" + str(init_node))
+    # print("garage:" + str(garage))
     ## Atualiza solucao local com o nodo atual
-    if current_node != init_node:
+    if current_node != garage:
         visiteds.append(current_node)
 
     ## Se RETORNOU a garagem, finaliza a solucao local,
     ## atualiza a solucao global e retorna
-    if init_node in visiteds:
-        local_solution = list(itertools.chain(*[[init_node], visiteds])) #flattened list
+    if garage in visiteds:
+        local_solution = list(itertools.chain(*[[garage], visiteds])) #flattened list
         solution.append(local_solution)
         # Custo total a partir da garagem k
-        print("Solucao local (garagem "+str(init_node)+"): "+str(local_solution)+" | Custo local: "+str(local_cost))
+        print("Solucao local (garagem "+str(garage)+"): "+str(local_solution)+" | Custo local: "+str(local_cost))
         return 0
 
     ## Gera os candidates a partir do nodo atual
@@ -46,13 +46,17 @@ def construct(current_node, local_cost):
     for dest in range(len(graph[current_node])):
         if dest not in visiteds:
             if graph[current_node][dest] != -1:
-                if dest > 1:
+                if dest > k_garages-1 or dest == garage:
                     candidates.append(dest)
 
     ## Retorna do algoritmo caso nao haja caminho factivel
     if len(candidates) == 0:
-        print("Nenhum caminho possivel")
-        return 0
+        # print("Nenhum caminho possivel")
+        if graph[current_node][garage] != -1:
+            candidates.append(garage)
+        else:
+            print("Solucao infactivel")
+            return 0
 
     ## Obtem o custo de cada candidato
     candidates_costs = []
@@ -72,6 +76,7 @@ def construct(current_node, local_cost):
     choice = random.randrange(0,len(rcl))
     local_cost = local_cost + graph[current_node][rcl[choice]]
 
+    print("\nNodo atual: " + str(current_node))
     print("Candidatos: " + str(candidates))
     print("Max: " + str(max_s) + " / Min: " + str(min_s) + " / Limit: " + str(limit))
     print("RCL: " + str(rcl) + " / Dest escolhido: " + str(rcl[choice]))
@@ -82,8 +87,8 @@ def construct(current_node, local_cost):
     ## saiba que deve retornar.
     ## Caso contrario, segue o fluxo normal, atualizando a lista global de visitados
     next_node = rcl[choice]
-    if next_node == init_node:
-        visiteds.append(init_node)
+    if next_node == garage:
+        visiteds.append(garage)
     else:
         global_visiteds.append(next_node)
 
@@ -97,11 +102,14 @@ def construct(current_node, local_cost):
 
 ## end construct
 
-def run(graph_instance):
+def run(graph_instance, garages_instance, capacities_instance):
 
-    global graph, alpha, solution, global_visiteds, n_garages, init_node, candidates, rcl, local_cost, visiteds
+    global solution, global_visiteds, garage, candidates, rcl, local_cost, visiteds
+    global graph, alpha, k_garages, capacities
 
     graph = graph_instance
+    k_garages = garages_instance
+    capacities = capacities_instance
 
     def getAlpha():
         alpha = float(raw_input("Alpha (entre 0.0 e 1.0): "))
@@ -113,16 +121,16 @@ def run(graph_instance):
     alpha = getAlpha()
     solution = []
     global_visiteds = []
-    n_garages = 2
-    init_node = 0 # Garage K
     candidates = [] #refresh for each trip inside sequence
     rcl = []
     local_cost = 0
     visiteds = []
 
-    construct(init_node,local_cost)
+    garage = random.randrange(0,k_garages) # 0, ... k_garages-1
+    
+    construct(garage,local_cost)
 
 
-# construct(init_node, local_cost)
+# construct(garage, local_cost)
 
 # print("Viagens realizadas: "+str(global_visiteds))

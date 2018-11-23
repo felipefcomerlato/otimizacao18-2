@@ -45,17 +45,18 @@ def getInfos(f):
     trips = int(first_line[1])
 
     # Print infos
-    print("Garages: "+str(garages))
-    print("Trips: "+str(trips))
+    print("\nGarages(#k): "+str(garages)+" | Trips: "+str(trips))
+    print("Capacities")
     for g in range(len(capacities)):
-        print("Garagem "+str(g)+" : capacidade "+str(capacities[g]))
+        print("K="+str(g)+" : "+str(capacities[g]))
+    print("\n")
 
     table_lines = []
     for line in content:
         table_lines.append(line.split())
 
     graph_setted = graph_instance.set(table_lines)
-    grasp.run(graph_setted)
+    grasp.run(graph_setted, garages, capacities)
 
 # -----------------
 
