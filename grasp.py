@@ -38,7 +38,7 @@ def construct(current_node, local_cost):
         local_solution = list(itertools.chain(*[[garage], copy.deepcopy(visiteds)])) #flattened list
         solution.append(copy.deepcopy(local_solution))
         global_visiteds.append(list(itertools.chain(pre_global_visiteds)))
-        print("Solucao local (garagem "+str(garage)+"): "+str(local_solution)+" | Custo local: "+str(local_cost))
+        print("k="+str(garage)+" : "+str(local_solution)+" | Local cost: "+str(local_cost))
         costs_table.append(local_cost)
         del local_solution[:]
         return 0
@@ -57,10 +57,7 @@ def construct(current_node, local_cost):
         if graph[current_node][garage] != -1:
             candidates.append(garage)
         else:
-            print("Nenhum caminho possivel")
-            print("Solucao infactivel")
-            del local_solution[:]
-            del pre_global_visiteds[:]
+            print("k="+str(garage)+" : Impossible to return to the garage")
             return 0
 
     ## Obtem o custo de cada candidato
@@ -81,11 +78,10 @@ def construct(current_node, local_cost):
     choice = random.randrange(0,len(rcl))
     local_cost = local_cost + graph[current_node][rcl[choice]]
 
-    print("\nNodo atual: " + str(current_node))
-    print("Candidatos: " + str(candidates))
-    print("Max: " + str(max_s) + " / Min: " + str(min_s) + " / Limit: " + str(limit))
-    print("RCL: " + str(rcl) + " / Dest escolhido: " + str(rcl[choice]))
-    print("\n--------\n")
+    # print("\nNodo atual: " + str(current_node))
+    # print("Candidatos: " + str(candidates))
+    # print("Max: " + str(max_s) + " / Min: " + str(min_s) + " / Limit: " + str(limit))
+    # print("RCL: " + str(rcl) + " / Dest escolhido: " + str(rcl[choice]))
 
     ## Se o destino escolhido for a garagem de partida,
     ## add a garagem como visitado para que na proxima iteracao o algoritmo
@@ -133,6 +129,7 @@ def run(graph_instance, garages_instance, capacities_instance):
     visiteds = []
     costs_table = []
 
+    print("\n######################################\n")
     for k in range(k_garages):
         garage = random.randrange(0,k_garages) # 0, ... k_garages-1
         local_cost = 0
@@ -142,10 +139,9 @@ def run(graph_instance, garages_instance, capacities_instance):
 
     global_visiteds = list(itertools.chain(*global_visiteds))
 
-    print("\n-------------")
-    print("Solucao final: "+str(solution))
-    print("Custo: "+str(sum(costs_table)))
-    print("Locais visitados: "+str(global_visiteds))
+    print("\nFinal solution: "+str(solution))
+    print("Total cost: "+str(sum(costs_table)))
+    print("Visited places: "+str(global_visiteds)+"\n")
 
 # construct(garage, local_cost)
 
