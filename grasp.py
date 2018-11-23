@@ -41,7 +41,8 @@ def construct(current_node, local_cost):
         print("k="+str(garage)+" : "+str(local_solution)+" | Local cost: "+str(local_cost))
         costs_table.append(local_cost)
         del local_solution[:]
-        return 0
+        capacities[garage] = capacities[garage] - 1
+        return 1
 
     ## Gera os candidates a partir do nodo atual
     ## A garagem (origem) sempre eh um candidato
@@ -58,6 +59,7 @@ def construct(current_node, local_cost):
             candidates.append(garage)
         else:
             print("k="+str(garage)+" : Impossible to return to the garage")
+            garage_control[0] = 2
             return 0
 
     ## Obtem o custo de cada candidato
@@ -136,12 +138,15 @@ def run(graph_instance, garages_instance, capacities_instance):
         del visiteds[:]
         del pre_global_visiteds[:]
         construct(garage,local_cost)
+        # print("Garage: "+str(garage)+" -> "+str(capacities[garage]))
+        # capacities[garage] = capacities[garage] - 1
 
     global_visiteds = list(itertools.chain(*global_visiteds))
 
     print("\nFinal solution: "+str(solution))
     print("Total cost: "+str(sum(costs_table)))
     print("Visited places: "+str(global_visiteds)+"\n")
+    print("Capacities: "+str(capacities))
 
 # construct(garage, local_cost)
 

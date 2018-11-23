@@ -41,7 +41,7 @@ def getInfos(f):
     garages = int(first_line[0])
     capacities = []
     for g in range(garages):
-        capacities.append(first_line[2+g])
+        capacities.append(int(first_line[2+g]))
     trips = int(first_line[1])
 
     # Print infos
