@@ -132,7 +132,7 @@ def run(graph_instance, garages_instance, capacities_instance):
     costs_table = []
 
     print("\n######################################\n")
-    for k in range(k_garages): ## AQUI VAI UM WHILE (enquanto não forem visitados todos os locais)
+    for k in range(k_garages): ## AQUI VAI UM WHILE (enquanto nao forem visitados todos os locais)
         garage = random.randrange(0,k_garages) # 0, ... k_garages-1
         local_cost = 0
         del visiteds[:]
