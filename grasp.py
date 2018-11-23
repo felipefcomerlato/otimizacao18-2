@@ -35,27 +35,32 @@ def construct(current_node, local_cost):
     ## Se RETORNOU a garagem, finaliza a solucao local,
     ## atualiza a solucao global e retorna
     if garage in visiteds:
-        local_solution = list(itertools.chain(*[[garage], visiteds])) #flattened list
-        solution.append(local_solution)
-        # Custo total a partir da garagem k
+        local_solution = list(itertools.chain(*[[garage], copy.deepcopy(visiteds)])) #flattened list
+        solution.append(copy.deepcopy(local_solution))
+        global_visiteds.append(list(itertools.chain(pre_global_visiteds)))
         print("Solucao local (garagem "+str(garage)+"): "+str(local_solution)+" | Custo local: "+str(local_cost))
+        costs_table.append(local_cost)
+        del local_solution[:]
         return 0
 
     ## Gera os candidates a partir do nodo atual
     ## A garagem (origem) sempre eh um candidato
     for dest in range(len(graph[current_node])):
-        if dest not in visiteds:
-            if graph[current_node][dest] != -1:
-                if dest > k_garages-1 or dest == garage:
-                    candidates.append(dest)
+        if dest not in list(itertools.chain(*global_visiteds)):
+            if dest not in visiteds:
+                if graph[current_node][dest] != -1:
+                    if dest > k_garages-1 or dest == garage:
+                        candidates.append(dest)
 
     ## Retorna do algoritmo caso nao haja caminho factivel
     if len(candidates) == 0:
-        # print("Nenhum caminho possivel")
         if graph[current_node][garage] != -1:
             candidates.append(garage)
         else:
+            print("Nenhum caminho possivel")
             print("Solucao infactivel")
+            del local_solution[:]
+            del pre_global_visiteds[:]
             return 0
 
     ## Obtem o custo de cada candidato
@@ -90,7 +95,7 @@ def construct(current_node, local_cost):
     if next_node == garage:
         visiteds.append(garage)
     else:
-        global_visiteds.append(next_node)
+        pre_global_visiteds.append(next_node)
 
     ## Limpa as listas locais
     del candidates[:]
@@ -106,6 +111,7 @@ def run(graph_instance, garages_instance, capacities_instance):
 
     global solution, global_visiteds, garage, candidates, rcl, local_cost, visiteds
     global graph, alpha, k_garages, capacities
+    global pre_global_visiteds, costs_table
 
     graph = graph_instance
     k_garages = garages_instance
@@ -121,15 +127,25 @@ def run(graph_instance, garages_instance, capacities_instance):
     alpha = getAlpha()
     solution = []
     global_visiteds = []
+    pre_global_visiteds = []
     candidates = [] #refresh for each trip inside sequence
     rcl = []
-    local_cost = 0
     visiteds = []
+    costs_table = []
 
-    garage = random.randrange(0,k_garages) # 0, ... k_garages-1
-    
-    construct(garage,local_cost)
+    for k in range(k_garages):
+        garage = random.randrange(0,k_garages) # 0, ... k_garages-1
+        local_cost = 0
+        del visiteds[:]
+        del pre_global_visiteds[:]
+        construct(garage,local_cost)
 
+    global_visiteds = list(itertools.chain(*global_visiteds))
+
+    print("\n-------------")
+    print("Solucao final: "+str(solution))
+    print("Custo: "+str(sum(costs_table)))
+    print("Locais visitados: "+str(global_visiteds))
 
 # construct(garage, local_cost)
 
