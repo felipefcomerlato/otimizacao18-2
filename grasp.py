@@ -24,9 +24,13 @@
 import copy
 import itertools
 import random
+import time
 
 
 def construct(current_node, local_cost):
+    global count_infact
+    global size_global_visiteds
+    global capacities_aux
     # print("garage:" + str(garage))
     ## Atualiza solucao local com o nodo atual
     if current_node != garage:
@@ -37,11 +41,13 @@ def construct(current_node, local_cost):
     if garage in visiteds:
         local_solution = list(itertools.chain(*[[garage], copy.deepcopy(visiteds)])) #flattened list
         solution.append(copy.deepcopy(local_solution))
+        size_global_visiteds += len(pre_global_visiteds)
         global_visiteds.append(list(itertools.chain(pre_global_visiteds)))
-        print("k="+str(garage)+" : "+str(local_solution)+" | Local cost: "+str(local_cost))
+        # print("k="+str(garage)+" : "+str(local_solution)+" | Local cost: "+str(local_cost))
         costs_table.append(local_cost)
         del local_solution[:]
-        capacities[garage] = capacities[garage] - 1
+        capacities_aux[garage] = capacities_aux[garage] - 1
+        count_infact = 0
         return 1
 
     ## Gera os candidates a partir do nodo atual
@@ -59,7 +65,7 @@ def construct(current_node, local_cost):
             candidates.append(garage)
         else:
             print("k="+str(garage)+" : Impossible to return to the garage")
-            garage_control[0] = 2
+            count_infact += 1
             return 0
 
     ## Obtem o custo de cada candidato
@@ -105,15 +111,23 @@ def construct(current_node, local_cost):
 
 ## end construct
 
-def run(graph_instance, garages_instance, capacities_instance):
+count_infact = 0
+size_global_visiteds = 0
+current_optimal_cost = -1
+
+def run(graph_instance, garages_instance, capacities_instance, trips_instance):
 
     global solution, global_visiteds, garage, candidates, rcl, local_cost, visiteds
-    global graph, alpha, k_garages, capacities
-    global pre_global_visiteds, costs_table
+    global graph, alpha, k_garages, capacities, capacities_aux
+    global pre_global_visiteds, costs_table, trips
+    global size_global_visiteds, count_infact
+    global current_optimal_cost
 
     graph = graph_instance
     k_garages = garages_instance
     capacities = capacities_instance
+    trips = trips_instance
+
 
     def getAlpha():
         alpha = float(raw_input("Alpha (entre 0.0 e 1.0): "))
@@ -132,24 +146,43 @@ def run(graph_instance, garages_instance, capacities_instance):
     costs_table = []
 
     print("\n######################################\n")
-    for k in range(k_garages): ## AQUI VAI UM WHILE (enquanto nao forem visitados todos os locais)
-        garage = random.randrange(0,k_garages) # 0, ... k_garages-1
-        local_cost = 0
+    # print(len(global_visiteds))
+    # print(trips)
+    initial_time = time.time()
+    while True:
+        if time.time() - initial_time > 360:
+            break
+        capacities_aux = copy.deepcopy(capacities)
+        while size_global_visiteds < trips: ## AQUI VAI UM WHILE (enquanto nao forem visitados todos os locais)
+        # for k in range(2):
+            if count_infact < trips*k_garages:
+                garage = random.randrange(0,k_garages) # 0, ... k_garages-1
+                local_cost = 0
+                if capacities_aux[garage] > 0: ## SE AINDA TEM BUS DISPONIVEL
+                    construct(garage,local_cost)
+                del visiteds[:]
+                del pre_global_visiteds[:]
+            else:
+                size_global_visiteds = trips
+
+            if sum(capacities_aux) == 0:
+                break
+
+        global_visiteds = list(itertools.chain(*global_visiteds))
+
+        total_cost = sum(costs_table)
+        if current_optimal_cost != -1:
+            if total_cost < current_optimal_cost:
+                current_optimal_cost = total_cost
+                print("\nTotal cost: "+str(total_cost))
+                # print("Final solution: "+str(solution))
+        else:
+            current_optimal_cost = total_cost
+
+        # print("Visited places: "+str(global_visiteds)+"\n")
+        del global_visiteds[:]
+        del costs_table[:]
         del visiteds[:]
         del pre_global_visiteds[:]
-        if capacities[garage] > 0: ## SE AINDA TEM BUS DISPONIVEL
-            construct(garage,local_cost)
-
-        # print("Garage: "+str(garage)+" -> "+str(capacities[garage]))
-        # capacities[garage] = capacities[garage] - 1
-
-    global_visiteds = list(itertools.chain(*global_visiteds))
-
-    print("\nFinal solution: "+str(solution))
-    print("Total cost: "+str(sum(costs_table)))
-    print("Visited places: "+str(global_visiteds)+"\n")
-    print("Capacities: "+str(capacities))
-
-# construct(garage, local_cost)
-
-# print("Viagens realizadas: "+str(global_visiteds))
+        size_global_visiteds = 0
+        count_infact = 0
