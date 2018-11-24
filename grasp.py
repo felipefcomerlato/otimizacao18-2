@@ -149,10 +149,12 @@ def run(graph_instance, garages_instance, capacities_instance, trips_instance):
     # print(len(global_visiteds))
     # print(trips)
     initial_time = time.time()
+    open('output_grasp.txt', 'w').close()
     while True:
         if time.time() - initial_time > 360:
             break
         capacities_aux = copy.deepcopy(capacities)
+        del solution[:]
         while size_global_visiteds < trips: ## AQUI VAI UM WHILE (enquanto nao forem visitados todos os locais)
         # for k in range(2):
             if count_infact < trips*k_garages:
@@ -174,6 +176,7 @@ def run(graph_instance, garages_instance, capacities_instance, trips_instance):
         if current_optimal_cost != -1:
             if total_cost < current_optimal_cost:
                 current_optimal_cost = total_cost
+                file_writer(total_cost, solution)
                 print("\nTotal cost: "+str(total_cost))
                 # print("Final solution: "+str(solution))
         else:
@@ -186,3 +189,11 @@ def run(graph_instance, garages_instance, capacities_instance, trips_instance):
         del pre_global_visiteds[:]
         size_global_visiteds = 0
         count_infact = 0
+
+def file_writer(total_cost, solution):
+    file = open("output_grasp.txt","a")
+
+    file.write("\nSolucao: "+str(solution))
+    file.write("\nCusto: "+str(total_cost))
+
+    file.close()
