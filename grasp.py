@@ -85,10 +85,18 @@ def construct(current_node, local_cost):
             # Duplica chance de ser escolhido um caminho diferente da garagem
             if c != garage:
                 rcl.append(c)
+                rcl.append(c)
+                rcl.append(c)
 
     ## Escolhe um caminho a seguir aleatoriamente dentre o contidos em RCL
     choice = random.randrange(0,len(rcl))
     local_cost = local_cost + graph[current_node][rcl[choice]]
+
+    # SE O ESCOLHIDO DER CUSTO MAIOR, CANCELA ELE E ESCOLHE OUTRO
+    # BOLAR LOGICA DE PREDICAO
+    # EM VEZ DE CANCELAR A SOLUCAO ATUAL QUANDO ENCONTRAR VALOR > QUE O OTIMO
+    # PODE SIMPLESMENTE TROCAR AQUELA SEQUENCIA DE VIAGEM E NAO CANCELAR TODA A SOLUCAO
+    # E ISSO PODE-SE ESTENDER A ALGUNS NIVEIS DE PREDICAO
 
     # print("\nNodo atual: " + str(current_node))
     # print("Candidatos: " + str(candidates))
