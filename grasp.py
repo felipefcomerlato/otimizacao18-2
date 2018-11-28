@@ -79,24 +79,38 @@ def construct(current_node, local_cost):
     min_s = min(candidates_costs,key=lambda item:item[1])[1]
     limit = min_s + alpha*(max_s - min_s)
     ## Gera o RCL com base nos candidatos de custo abaixo do limitante
+    ## e no "peso" baseado no tamanho do rcl do possivel candidato
     for c in candidates:
         if graph[current_node][c] <= limit:
             rcl.append(c)
-            # Duplica chance de ser escolhido um caminho diferente da garagem
             if c != garage:
-                rcl.append(c)
-                rcl.append(c)
-                rcl.append(c)
+                ####################################
+                # Preve os candidatos do possivel destino
+                future_candidates = []
+                for dest in range(len(graph[c])):
+                    if dest not in list(itertools.chain(*global_visiteds)):
+                        if dest not in visiteds:
+                            if graph[c][dest] != -1:
+                                if dest > k_garages-1 or dest == garage:
+                                    future_candidates.append(dest)
+                # Preve os custos dos candidatos do possivel destino
+                future_candidates_costs = []
+                for f in future_candidates:
+                    future_candidates_costs.append((f, graph[c][f]))
+                # Preve o limitante dos candidatos do possivel destino
+                future_max_s = max(future_candidates_costs,key=lambda item:item[1])[1]
+                future_min_s = min(future_candidates_costs,key=lambda item:item[1])[1]
+                future_limit = future_min_s + (alpha/2)*(future_max_s - future_min_s)
+                # Insere o candidato X vezes no atual rcl,
+                # onde X eh o tamanho do rcl do candidato
+                for f in future_candidates:
+                    if graph[c][f] <= future_limit:
+                        rcl.append(c)
+                ###################################
 
     ## Escolhe um caminho a seguir aleatoriamente dentre o contidos em RCL
     choice = random.randrange(0,len(rcl))
     local_cost = local_cost + graph[current_node][rcl[choice]]
-
-    # SE O ESCOLHIDO DER CUSTO MAIOR, CANCELA ELE E ESCOLHE OUTRO
-    # BOLAR LOGICA DE PREDICAO
-    # EM VEZ DE CANCELAR A SOLUCAO ATUAL QUANDO ENCONTRAR VALOR > QUE O OTIMO
-    # PODE SIMPLESMENTE TROCAR AQUELA SEQUENCIA DE VIAGEM E NAO CANCELAR TODA A SOLUCAO
-    # E ISSO PODE-SE ESTENDER A ALGUNS NIVEIS DE PREDICAO
 
     # print("\nNodo atual: " + str(current_node))
     # print("Candidatos: " + str(candidates))
