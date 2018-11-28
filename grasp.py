@@ -190,7 +190,7 @@ def run(graph_instance, garages_instance, capacities_instance, trips_instance):
         capacities_aux = copy.deepcopy(capacities)
         del solution[:]
         while size_global_visiteds < trips:
-            if count_infact < trips*k_garages:
+            if count_infact < trips*k_garages*sum(capacities):
                 garage = random.randrange(0,k_garages) # 0, ... k_garages-1
                 local_cost = 0
                 if capacities_aux[garage] > 0:
