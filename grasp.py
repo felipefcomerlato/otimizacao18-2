@@ -176,7 +176,14 @@ def run(graph_instance, garages_instance, capacities_instance, trips_instance):
     # print(len(global_visiteds))
     # print(trips)
     initial_time = time.time()
-    open('output_grasp.txt', 'w').close()
+    alpha_str = str(alpha).split(".")
+    alpha_int = alpha_str[0]
+    if len(alpha_str) > 1:
+        alpha_dec = alpha_str[1]
+    else:
+        alpha_dec = "00"
+    output_name = "output_files/output_grasp_"+alpha_int+"_"+alpha_dec+".txt"
+    open(output_name, 'w').close()
     while True:
         if time.time() - initial_time > 3600:
             break
@@ -203,7 +210,7 @@ def run(graph_instance, garages_instance, capacities_instance, trips_instance):
         if current_optimal_cost != -1:
             if total_cost < current_optimal_cost:
                 current_optimal_cost = total_cost
-                file_writer(total_cost, solution, total_vehicles - sum(capacities_aux))
+                file_writer(output_name, total_cost, solution, total_vehicles - sum(capacities_aux))
                 print("\nTotal cost: "+str(total_cost))
                 # print("Final solution: "+str(solution))
         else:
@@ -217,8 +224,8 @@ def run(graph_instance, garages_instance, capacities_instance, trips_instance):
         size_global_visiteds = 0
         count_infact = 0
 
-def file_writer(total_cost, solution, vehicles):
-    file = open("output_grasp.txt","a")
+def file_writer(output_name, total_cost, solution, vehicles):
+    file = open(output_name,"a")
 
     file.write("\nCusto: "+str(total_cost)+" | Veiculos: "+str(vehicles))
     file.write("\nSolucao: ")
