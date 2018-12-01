@@ -17,22 +17,22 @@ import grasp
 
 def input_path():
     file_name = raw_input("Enter name of instance file: ")
-    load("input_files/"+file_name)
+    load("input_files/"+file_name, file_name)
 
-def load(file_name):
-    if os.path.exists(file_name):
-        with open(file_name, 'r') as file_object:
+def load(file_source, file_name):
+    if os.path.exists(file_source):
+        with open(file_source, 'r') as file_object:
             try:
-                getInfos(file_object)
+                getInfos(file_object, file_name)
                 return True
             except:
-                print("Fail while opening file. Try again!\n")
+                print("Fail during algorithm run. Cancel this execution and reopen the program!\n")
                 input_path()
     else:
         print("Name file not exist. Try again!\n")
         input_path()
 
-def getInfos(f):
+def getInfos(f, file_name):
     content = [x.strip() for x in f.readlines()] # Read lines ignoring '\n'
     first_line = content[:1]
     first_line = first_line[0].split()
@@ -56,7 +56,7 @@ def getInfos(f):
         table_lines.append(line.split())
 
     graph_setted = graph_instance.set(table_lines)
-    grasp.setParams(graph_setted, garages, capacities, trips)
+    grasp.setParams(graph_setted, garages, capacities, trips, file_name)
 
 # -----------------
 
