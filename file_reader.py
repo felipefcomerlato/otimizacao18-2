@@ -56,7 +56,7 @@ def getInfos(f):
         table_lines.append(line.split())
 
     graph_setted = graph_instance.set(table_lines)
-    grasp.run(graph_setted, garages, capacities, trips)
+    grasp.setParams(graph_setted, garages, capacities, trips)
 
 # -----------------
 
