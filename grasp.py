@@ -69,7 +69,7 @@ def grasp(input_file_name):
             file_writer(output_file, total_cost, solution, total_vehicles - sum(capacities_aux), current_seed-1, current_time)
             print("\nNew solution:")
             print("Total cost: "+str(total_cost)+" | Vehicles: "+str(total_vehicles - sum(capacities_aux)))
-            print("Seed: "+str(current_seed-1)+" | Time: "+str("{0:.2f}".format(current_time))+"\n")
+            print("Seed: "+str(current_seed-1)+" | Time(s): "+str("{0:.2f}".format(current_time))+"\n")
             current_optimal_cost = total_cost
 
         del global_visiteds[:]
