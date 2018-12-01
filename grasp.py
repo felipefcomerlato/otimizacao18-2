@@ -80,12 +80,14 @@ def grasp(input_file_name):
         count_infact = 0
 
         while True:
+            new_optimal_solution = False
             before = current_optimal_cost
             for seq in range(len(solution)):
                 for i in range(1,len(solution[seq])-1):
                     local(seq, i)
                     current_time = time.time() - initial_time
                     if current_optimal_cost < global_optimal_cost:
+                        new_optimal_solution = True
                         global_optimal_cost = current_optimal_cost
                         file_writer(output_file, global_optimal_cost, solution, total_vehicles - sum(capacities_aux), current_seed-1, current_time)
                         # print("Total cost: "+str(total_cost)+" | Vehicles: "+str(total_vehicles - sum(capacities_aux)))
@@ -93,7 +95,10 @@ def grasp(input_file_name):
                         # print("Novo custo otimo: "+str(global_optimal_cost))
             if before == current_optimal_cost:
                 break
-
+        if new_optimal_solution:
+            print("\nNew solution:")
+            print("Total cost: "+str(total_cost)+" | Vehicles: "+str(total_vehicles - sum(capacities_aux)))
+            print("Seed: "+str(current_seed-1)+" | Time(s): "+str("{0:.2f}".format(current_time))+"\n")
 
 def construct():
     global count_infact, size_global_visiteds, current_optimal_cost
