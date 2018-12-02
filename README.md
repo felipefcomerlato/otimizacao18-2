@@ -1,8 +1,11 @@
 # Otimização Combinatória - UFRGS 2018/2
 
-## Trabalho final (em construção)
+## MDVSP utilizando a meta-heurística GRASP
+
+* MDVSP - Multiple Depot Vehicle Scheduling Problem
+* [GRASP](http://mauricio.resende.info/doc/gmis.pdf)
 
 ## Autores
 
 * **Felipe Fischer Comerlato** - [felipefcomerlato](https://github.com/felipefcomerlato)
-* **Gabriel Abreu**
+* **Gabriel Abreu** - [gabrieldesouzaabreu-br](https://github.com/gabrieldesouzaabreu-br)
